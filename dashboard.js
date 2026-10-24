@@ -460,11 +460,18 @@ Mức độ: 3
     if (btnExport) {
         btnExport.addEventListener("click", () => {
             if (allResults.length === 0) return alert("Chưa có kết quả!");
-            let csvContent = "STT,Tên học sinh,Mã đề,Tên đề thi,Điểm,Số câu đúng,Thời gian nộp bài\n";
+            
+            // 1. Cập nhật Tiêu đề cột trong Excel (Thêm Lớp)
+            let csvContent = "STT,Tên học sinh,Lớp,Mã đề,Tên đề thi,Điểm,Số câu đúng,Thời gian nộp bài\n";
+            
+            // 2. Chèn thêm dữ liệu studentClass vào từng dòng
             allResults.forEach((r, i) => {
                 const date = r.submittedAt ? r.submittedAt.toDate().toLocaleString('vi-VN') : '';
-                csvContent += `${i + 1},"${r.studentName}","${r.examCode}","${r.examTitle}",${r.score},"${r.correctCount}/${r.totalQuestions}","${date}"\n`;
+                const lop = r.studentClass ? r.studentClass : "";
+                
+                csvContent += `${i + 1},"${r.studentName}","${lop}","${r.examCode}","${r.examTitle}",${r.score},"${r.correctCount}/${r.totalQuestions}","${date}"\n`;
             });
+
             const blob = new Blob(["\ufeff", csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);

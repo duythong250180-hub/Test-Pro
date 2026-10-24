@@ -15,6 +15,7 @@ const db = getFirestore(app);
 
 document.addEventListener("DOMContentLoaded", async () => {
     const studentName = sessionStorage.getItem("studentName");
+    const studentClass = sessionStorage.getItem('studentClass');
     const examId = sessionStorage.getItem("examId");
     const examTitle = sessionStorage.getItem("examTitle");
     const examDuration = parseInt(sessionStorage.getItem("examDuration"));
@@ -161,11 +162,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         score = Math.round(score * 100) / 100;
         try {
-            await addDoc(collection(db, "results"), {
-                examId: examId, examTitle: examTitle, examCode: examData.examCode,
-                studentName: studentName, score: score, correctCount: correctCount,
-                totalQuestions: cards.length, teacherId: examData.teacherId, submittedAt: serverTimestamp()
-            });
+           await addDoc(collection(db, "results"), {
+    examId: examId, 
+    examTitle: examTitle, 
+    examCode: examData.examCode, // (Giữ nguyên các trường cũ của bạn)
+    studentName: studentName, 
+    studentClass: studentClass,  // <--- THÊM DÒNG NÀY VÀO ĐÂY
+    score: score, 
+    correctCount: correctCount,
+    totalQuestions: cards.length, 
+    teacherId: examData.teacherId
+});
             sessionStorage.clear();
             alert(`🎉 NỘP BÀI THÀNH CÔNG!\n- Điểm của bạn: ${score}\n- Số câu đúng: ${correctCount} / ${cards.length}`);
             window.location.href = "index.html"; 

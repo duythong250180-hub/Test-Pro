@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký Giáo viên - Test Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Test Pro</div>
+        <button onclick="window.location.href='index.html'" class="btn-outline">Quay lại Trang chủ</button>
+    </header>
+
+    <main class="main-content">
+        <div class="student-login-box">
+            <h2>Đăng ký Quản trị</h2>
+            <p>Tạo tài khoản giáo viên mới để quản lý đề thi.</p>
+            
+            <form id="teacher-register-form">
+                <div class="input-group">
+                    <label for="reg-email">Email:</label>
+                    <input type="email" id="reg-email" placeholder="Nhập email của bạn..." required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="reg-password">Mật khẩu (tối thiểu 6 ký tự):</label>
+                    <input type="password" id="reg-password" placeholder="Tạo mật khẩu..." required minlength="6">
+                </div>
+
+                <button type="submit" class="btn-primary">Đăng ký ngay</button>
+                
+                <p style="text-align: center; margin-top: 15px;">
+                    Đã có tài khoản? <a href="teacher-login.html" style="color: #007bff; text-decoration: none; font-weight: bold;">Đăng nhập</a>
+                </p>
+            </form>
+        </div>
+    </main>
+
+    <!-- Gọi file xử lý đăng ký Firebase -->
+    <script type="module" src="register.js"></script>
+</body>
+</html>
