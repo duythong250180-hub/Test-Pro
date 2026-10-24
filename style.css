@@ -1,0 +1,79 @@
+/* =========================================
+   PHẦN 1: CÀI ĐẶT CHUNG VÀ GIAO DIỆN CƠ BẢN
+   ========================================= */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: Arial, sans-serif; 
+}
+
+body { 
+    background-color: #f4f7f6; 
+    color: #333; 
+}
+
+/* Header */
+.header {
+    display: flex; justify-content: space-between; align-items: center;
+    background-color: #ffffff; padding: 15px 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.logo { font-size: 24px; font-weight: bold; color: #2563eb; }
+
+/* Định dạng Nút bấm */
+button { 
+    cursor: pointer; padding: 10px 20px; border-radius: 5px; 
+    font-size: 16px; border: none; transition: 0.3s;
+}
+.btn-outline { background: transparent; border: 1px solid #2563eb; color: #2563eb; }
+.btn-outline:hover { background: #2563eb; color: #fff; }
+
+.btn-primary { background: #2563eb; color: #fff; width: 100%; margin-top: 10px; font-weight: bold;}
+.btn-primary:hover { background: #1d4ed8; }
+
+/* =========================================
+   PHẦN 2: TRANG CHỦ & ĐĂNG NHẬP
+   ========================================= */
+.main-content { display: flex; justify-content: center; margin-top: 60px; padding: 20px; }
+.student-login-box {
+    background: #fff; padding: 30px; border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 100%; max-width: 400px;
+}
+.student-login-box h2 { margin-bottom: 10px; text-align: center; color: #1f2937;}
+.student-login-box p { font-size: 14px; color: #6b7280; text-align: center; margin-bottom: 20px;}
+
+.input-group { margin-bottom: 15px; }
+.input-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;}
+.input-group input {
+    width: 100%; padding: 10px; border: 1px solid #ccc;
+    border-radius: 4px; font-size: 14px; outline: none;
+}
+.input-group input:focus { border-color: #2563eb; }
+
+/* =========================================
+   PHẦN 3: TRANG QUẢN TRỊ (DASHBOARD)
+   ========================================= */
+.dashboard-body { display: flex; flex-direction: column; height: 100vh; }
+.user-info { display: flex; align-items: center; gap: 15px; }
+#user-email { font-weight: bold; color: #1f2937; }
+
+.dashboard-container { display: flex; flex: 1; overflow: hidden; }
+
+/* Menu bên trái */
+.sidebar { width: 250px; background: #fff; border-right: 1px solid #e5e7eb; padding: 20px 0; }
+.menu { list-style: none; }
+.menu li { padding: 15px 20px; cursor: pointer; color: #4b5563; transition: 0.2s; }
+.menu li:hover { background: #f3f4f6; color: #2563eb; }
+.menu li.active { border-left: 4px solid #2563eb; color: #2563eb; font-weight: bold; background: #eff6ff; }
+
+/* Khung nội dung chính */
+.main-panel { flex: 1; padding: 30px; background: #f4f7f6; overflow-y: auto; }
+.main-panel h2 { margin-bottom: 10px; color: #111827; }
+.main-panel p { color: #6b7280; margin-bottom: 30px; }
+
+/* Thẻ thống kê (Stats Grid) */
+.stats-grid { display: flex; gap: 20px; }
+.stat-card { background: #fff; padding: 20px; border-radius: 8px; flex: 1; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;}
+.stat-card h3 { font-size: 16px; color: #4b5563; margin-bottom: 10px; }
+.stat-number { font-size: 32px; font-weight: bold; color: #2563eb; }

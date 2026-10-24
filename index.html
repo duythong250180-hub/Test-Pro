@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Pro - Hệ thống kiểm tra trực tuyến</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+    <div class="logo">Test Pro</div>
+    <button onclick="window.location.href='teacher-login.html'" class="btn-outline">Quản trị viên (Giáo viên)</button>
+</header>
+
+    <main class="main-content">
+        <div class="student-login-box">
+            <h2>Học sinh tham gia thi</h2>
+            <p>Nhập mã đề thi giáo viên cung cấp để bắt đầu.</p>
+            
+            <form id="student-login-form">
+                <div class="input-group">
+                    <label for="test-code">Mã đề thi (ID):</label>
+                    <input type="text" id="test-code" placeholder="VD: TOAN10-123" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="student-name">Họ và tên học sinh:</label>
+                    <input type="text" id="student-name" placeholder="Nhập họ tên của em..." required>
+                </div>
+
+                <button type="submit" class="btn-primary">Vào làm bài</button>
+            </form>
+        </div>
+    </main>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

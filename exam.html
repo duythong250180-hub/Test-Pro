@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Làm bài thi - Test Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .exam-header { position: sticky; top: 0; background: white; padding: 10px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+        .timer { font-size: 28px; font-weight: bold; color: #ef4444; background: #fee2e2; padding: 5px 20px; border-radius: 8px; border: 2px solid #ef4444;}
+        
+        /* Box Header Giống Đề Thi Thật */
+        .exam-paper-header { background: #fff; padding: 25px; border-radius: 8px; margin-bottom: 30px; border: 2px solid #2563eb; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .exam-paper-top { display: flex; justify-content: space-between; border-bottom: 2px dashed #93c5fd; padding-bottom: 15px; margin-bottom: 15px;}
+        .exam-paper-top p { font-size: 16px; margin-bottom: 5px; color: #1e3a8a;}
+        .exam-title-main { text-align: center; color: #1e3a8a; font-size: 24px; text-transform: uppercase; font-weight: bold; margin-top: 10px;}
+        
+        /* Tiêu đề 3 Phần */
+        .section-title { font-size: 18px; font-weight: bold; color: #111827; background: #e5e7eb; padding: 12px 15px; border-left: 6px solid #2563eb; margin: 40px 0 20px 0; text-transform: uppercase; }
+        
+        .question-card { background: white; padding: 25px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #f3f4f6;}
+        .question-title { font-weight: bold; margin-bottom: 15px; font-size: 16px; line-height: 1.5; color: #1f2937;}
+        
+        /* Format Câu hỏi */
+        .option-label { display: block; margin-bottom: 10px; cursor: pointer; padding: 12px; border: 1px solid #e5e7eb; border-radius: 6px; transition: 0.2s; }
+        .option-label:hover { background: #f9fafb; border-color: #2563eb;}
+        .option-label input[type="radio"] { margin-right: 10px; transform: scale(1.2); }
+        
+        .tf-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .tf-table th, .tf-table td { border: 1px solid #e5e7eb; padding: 12px; text-align: center; }
+        .tf-table th { background: #f9fafb; font-weight: bold; color: #4b5563; }
+        .tf-table td.tf-statement { text-align: left; width: 70%; }
+        .tf-table input[type="radio"] { transform: scale(1.5); cursor: pointer; }
+        
+        .short-input { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 6px; font-size: 16px; transition: 0.3s; }
+        .short-input:focus { border-color: #2563eb; outline: none; }
+    </style>
+</head>
+<body>
+    <div class="exam-header">
+        <h2 style="color: #2563eb; margin: 0;">Test Pro</h2>
+        <div class="timer" id="display-timer">00:00</div>
+    </div>
+
+    <main style="max-width: 900px; margin: 30px auto; padding: 0 20px;">
+        
+        <!-- HEADER BÀI KIỂM TRA -->
+        <div class="exam-paper-header">
+            <div class="exam-paper-top">
+                <div>
+                    <p>Họ và tên thí sinh: <b id="display-student-name" style="color: #2563eb; font-size: 18px;"></b></p>
+                </div>
+                <div style="text-align: right;">
+                    <p>Thời gian làm bài: <b id="display-duration"></b> phút</p>
+                    <p>Mã đề thi: <b id="display-exam-code" style="color: #ef4444;"></b></p>
+                </div>
+            </div>
+            <div class="exam-title-main" id="display-exam-title">ĐANG TẢI ĐỀ THI...</div>
+        </div>
+
+        <form id="exam-form">
+            <div id="questions-container">
+                <div style="text-align: center; padding: 50px; font-size: 18px;">⏳ Đang xử lý dữ liệu...</div>
+            </div>
+            <button type="submit" id="btn-submit-exam" class="btn-primary" style="font-size: 18px; padding: 15px; display: none; margin-bottom: 50px; background: #10b981; border:none;">
+                NỘP BÀI
+            </button>
+        </form>
+    </main>
+
+    <script type="module" src="exam.js"></script>
+</body>
+</html>

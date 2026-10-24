@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập Giáo viên - Test Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Test Pro</div>
+        <button onclick="window.location.href='index.html'" class="btn-outline">Quay lại Trang chủ</button>
+    </header>
+
+    <main class="main-content">
+        <div class="student-login-box">
+            <h2>Đăng nhập Quản trị</h2>
+            <p>Dành riêng cho giáo viên để tạo đề và xem điểm.</p>
+            
+            <form id="teacher-login-form">
+                <div class="input-group">
+                    <label for="teacher-email">Email:</label>
+                    <input type="email" id="teacher-email" placeholder="Nhập email giáo viên..." required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="teacher-password">Mật khẩu:</label>
+                    <input type="password" id="teacher-password" placeholder="Nhập mật khẩu..." required>
+                </div>
+
+                <button type="submit" class="btn-primary">Đăng nhập</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Thêm dòng này để gọi file xử lý đăng nhập Firebase -->
+    <script type="module" src="auth.js"></script>
+</body>
+</html>

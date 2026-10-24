@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng điều khiển - Test Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Nhúng thư viện Mammoth.js để đọc file Word (.docx) trực tiếp trên trình duyệt -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+</head>
+<body class="dashboard-body">
+    <header class="header">
+        <div class="logo">Test Pro - Quản trị</div>
+        <div class="user-info">
+            <span id="user-email">Đang tải...</span>
+            <button id="btn-logout" class="btn-outline">Đăng xuất</button>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- MENU BÊN TRÁI -->
+        <aside class="sidebar">
+            <ul class="menu">
+                <li class="active" data-target="overview">Tổng quan</li>
+                <li data-target="questions">Ngân hàng câu hỏi</li>
+                <li data-target="exams">Đề thi của tôi</li>
+                <li data-target="results">Kết quả học sinh</li>
+            </ul>
+        </aside>
+
+        <!-- PANEL 1: TỔNG QUAN -->
+        <main id="overview-panel" class="main-panel">
+            <h2>Chào mừng thầy/cô đến với Test Pro!</h2>
+            <p>Hệ thống quản lý thi trắc nghiệm trực tuyến.</p>
+            <div class="stats-grid">
+                <div class="stat-card"><h3>Tổng số đề thi</h3><p class="stat-number" id="stat-exams">0</p></div>
+                <div class="stat-card"><h3>Tổng số câu hỏi</h3><p class="stat-number" id="stat-questions">0</p></div>
+                <div class="stat-card"><h3>Lượt làm bài</h3><p class="stat-number" id="stat-results">0</p></div>
+            </div>
+        </main>
+
+        <!-- PANEL 2: NGÂN HÀNG CÂU HỎI -->
+        <main id="question-bank-panel" class="main-panel" style="display: none;">
+            <h2 style="margin-bottom: 20px;">Ngân hàng câu hỏi</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                
+                <!-- HỘP THÊM CÂU HỎI ĐƠN -->
+                <div class="student-login-box" style="margin-top: 0; max-width: 100%;">
+                    <h3 style="margin-bottom: 15px;">Thêm câu hỏi đơn</h3>
+                    <form id="add-question-form">
+                        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                            <div class="input-group">
+                                <label>Loại câu hỏi:</label>
+                                <select id="q-type" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                                    <option value="MCQ">Phần I: 1 Lựa chọn</option>
+                                    <option value="TF">Phần II: Đúng/Sai</option>
+                                    <option value="SHORT">Phần III: Trả lời ngắn</option>
+                                </select>
+                            </div>
+                            <div class="input-group"><label>Mức độ:</label><input type="number" id="q-level" min="1" max="4" value="1" required></div>
+                            <div class="input-group"><label>Điểm:</label><input type="number" id="q-points" step="0.25" min="0" value="0.25" required></div>
+                        </div>
+                        <div class="input-group">
+                            <label>Nội dung câu hỏi:</label>
+                            <textarea id="q-content" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" required></textarea>
+                        </div>
+                        <div id="answers-container"></div>
+                        <button type="submit" class="btn-primary" style="margin-top: 15px;">Lưu câu hỏi</button>
+                    </form>
+                </div>
+
+                <!-- HỘP NHẬP HÀNG LOẠT & ĐỌC FILE -->
+                <div class="student-login-box" style="margin-top: 0; max-width: 100%; border-left: 4px solid #10b981;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <h3 style="margin: 0;">Nhập nhanh từ Word/Văn bản</h3>
+                        <div>
+                            <button id="btn-download-sample" type="button" class="btn-outline" style="font-size: 12px; padding: 6px 10px; border-color: #10b981; color: #10b981; margin-right: 5px; background: transparent; cursor: pointer;">📥 Đề Mẫu</button>
+                            
+                            <!-- NÚT UPLOAD FILE DOCX -->
+                            <label for="upload-docx" class="btn-primary" style="font-size: 12px; padding: 7px 12px; background-color: #3b82f6; color: white; cursor: pointer; display: inline-block; border-radius: 4px; margin: 0;">
+                                📁 Tải lên file Word (.docx)
+                            </label>
+                            <input type="file" id="upload-docx" accept=".docx" style="display: none;">
+                        </div>
+                    </div>
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 15px; line-height: 1.5;">
+                        <b>Quy tắc nhập Đáp án để tự động phân loại:</b><br>
+                        - Phần I (MCQ): <code>Đáp án: A</code><br>
+                        - Phần II (Đúng/Sai): <code>Đáp án: Đ,S,Đ,S</code><br>
+                        - Phần III (Trả lời ngắn): <code>Đáp án: &lt;key = số/chữ&gt;</code> (Bỏ trống A,B,C,D)<br>
+                        <i style="color: #ef4444;">*Lưu ý: Hệ thống chỉ đọc văn bản từ file Word, không hỗ trợ hình ảnh.</i>
+                    </p>
+                    <textarea id="bulk-questions-input" rows="8" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace;" placeholder="Dán văn bản hoặc tải file Word lên..."></textarea>
+                    <button id="btn-process-bulk" class="btn-primary" style="background-color: #10b981; margin-top: 10px;">Xử lý & Nhận diện dữ liệu</button>
+                    <div id="bulk-preview" style="margin-top: 15px; font-size: 14px; min-height: 20px;"></div>
+                </div>
+            </div>
+            
+            <!-- BẢNG DANH SÁCH CÂU HỎI -->
+            <div class="student-login-box" style="max-width: 100%;">
+                <h3>Danh sách câu hỏi đã lưu</h3>
+                <div style="margin-top: 15px; overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                        <thead>
+                            <tr style="background-color: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+                                <th style="padding: 10px; border: 1px solid #e5e7eb; text-align: center;">STT</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb; text-align: center;">Phần</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb;">Nội dung</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb; color: #10b981; text-align: center;">Đáp án</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb; text-align: center;">Mức độ</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb; color: #ef4444; text-align: center;">Điểm</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb; text-align: center;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="questions-table-body">
+                            <tr><td colspan="7" style="text-align: center; padding: 20px;">Đang tải dữ liệu...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- PANEL 3: ĐỀ THI CỦA TÔI -->
+        <main id="exams-panel" class="main-panel" style="display: none;">
+            <h2 style="margin-bottom: 20px;">Quản lý Đề thi</h2>
+            <div style="display: grid; grid-template-columns: 1.2fr 2fr; gap: 20px; margin-bottom: 30px;">
+                <div class="student-login-box" style="margin-top: 0; max-width: 100%;">
+                    <h3 style="margin-bottom: 15px;">Tạo đề thi mới</h3>
+                    <form id="create-exam-form">
+                        <div class="input-group"><label>Tên bài kiểm tra (Môn thi):</label><input type="text" id="exam-title" placeholder="VD: Kiểm tra Địa lý 12" required></div>
+                        <div class="input-group"><label>Mã đề thi (ID duy nhất):</label><input type="text" id="exam-code" style="text-transform: uppercase;" required></div>
+                        <div class="input-group"><label>Thời gian làm bài (phút):</label><input type="number" id="exam-duration" min="1" required></div>
+                        <div class="input-group"><label>Chọn câu hỏi:</label><div id="exam-question-selector" style="max-height: 250px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 4px; font-size: 13px; background: #f9fafb;">Đang tải...</div></div>
+                        <button type="submit" class="btn-primary" style="margin-top: 15px;">Tạo Đề Thi</button>
+                    </form>
+                </div>
+                <div class="student-login-box" style="margin-top: 0; max-width: 100%;">
+                    <h3>Danh sách đề thi đã tạo</h3>
+                    <div style="margin-top: 15px; overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                            <thead>
+                                <tr style="background-color: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+                                    <th style="padding: 10px; border: 1px solid #e5e7eb;">STT</th>
+                                    <th style="padding: 10px; border: 1px solid #e5e7eb;">Mã đề</th>
+                                    <th style="padding: 10px; border: 1px solid #e5e7eb;">Tên đề thi</th>
+                                    <th style="padding: 10px; border: 1px solid #e5e7eb;">Thời gian</th>
+                                    <th style="padding: 10px; border: 1px solid #e5e7eb;">Số câu</th>
+                                    <th style="padding: 10px; border: 1px solid #e5e7eb;">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="exams-table-body">
+                                <tr><td colspan="6" style="text-align: center; padding: 20px;">Đang tải dữ liệu...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- PANEL 4: KẾT QUẢ HỌC SINH -->
+        <main id="results-panel" class="main-panel" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Kết quả làm bài của học sinh</h2>
+                <button id="btn-export-csv" class="btn-primary" style="width: auto; margin-top: 0; background-color: #10b981;">Tải Bảng Điểm (Excel)</button>
+            </div>
+            <div class="student-login-box" style="max-width: 100%;">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                        <thead>
+                            <tr style="background-color: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+                                <th style="padding: 10px; border: 1px solid #e5e7eb;">STT</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb;">Tên học sinh</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb;">Mã đề</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb;">Tên đề thi</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb; color: #ef4444;">Điểm</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb;">Số câu đúng</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb;">Thời gian nộp bài</th>
+                                <th style="padding: 10px; border: 1px solid #e5e7eb;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-table-body">
+                            <tr><td colspan="8" style="text-align: center; padding: 20px;">Đang tải dữ liệu...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script type="module" src="dashboard.js"></script>
+</body>
+</html>

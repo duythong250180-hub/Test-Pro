@@ -1,0 +1,11 @@
+# Bỏ qua các file hệ thống máy tính
+.DS_Store
+Thumbs.db
+
+# Bỏ qua cấu hình riêng của VS Code
+.vscode/
+
+# Bỏ qua các file bộ nhớ đệm của Firebase (nếu có sau này)
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
