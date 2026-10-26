@@ -10,7 +10,7 @@
 </head>
 <body class="dashboard-body">
     <header class="header">
-        <div class="logo">Test Pro - Quản trị</div>
+        <div class="logo">Test Pro - Nguyễn Văn Thông</div>
         <div class="user-info">
             <span id="user-email">Đang tải...</span>
             <button id="btn-logout" class="btn-outline">Đăng xuất</button>
@@ -98,11 +98,19 @@
             
             <!-- BẢNG DANH SÁCH CÂU HỎI -->
             <div class="student-login-box" style="max-width: 100%;">
-                <h3>Danh sách câu hỏi đã lưu</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0;">Danh sách câu hỏi đã lưu</h3>
+                    <!-- Nút Xóa hàng loạt (Mặc định ẩn, chỉ hiện khi có tick chọn) -->
+                    <button id="btn-delete-selected-q" class="btn-primary" style="background-color: #ef4444; margin: 0; width: auto; display: none; padding: 6px 12px; font-size: 13px;">🗑 Xóa các câu đã chọn</button>
+                </div>
                 <div style="margin-top: 15px; overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
                         <thead>
                             <tr style="background-color: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+                                <!-- Cột Checkbox Chọn tất cả -->
+                                <th style="padding: 10px; border: 1px solid #e5e7eb; text-align: center; width: 40px;">
+                                    <input type="checkbox" id="cb-select-all-q" style="cursor: pointer;">
+                                </th>
                                 <th style="padding: 10px; border: 1px solid #e5e7eb; text-align: center;">STT</th>
                                 <th style="padding: 10px; border: 1px solid #e5e7eb; text-align: center;">Phần</th>
                                 <th style="padding: 10px; border: 1px solid #e5e7eb;">Nội dung</th>
@@ -113,7 +121,7 @@
                             </tr>
                         </thead>
                         <tbody id="questions-table-body">
-                            <tr><td colspan="7" style="text-align: center; padding: 20px;">Đang tải dữ liệu...</td></tr>
+                            <tr><td colspan="8" style="text-align: center; padding: 20px;">Đang tải dữ liệu...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -130,7 +138,12 @@
                         <div class="input-group"><label>Tên bài kiểm tra (Môn thi):</label><input type="text" id="exam-title" placeholder="VD: Kiểm tra Địa lý 12" required></div>
                         <div class="input-group"><label>Mã đề thi (ID duy nhất):</label><input type="text" id="exam-code" style="text-transform: uppercase;" required></div>
                         <div class="input-group"><label>Thời gian làm bài (phút):</label><input type="number" id="exam-duration" min="1" required></div>
-                        <div class="input-group"><label>Chọn câu hỏi:</label><div id="exam-question-selector" style="max-height: 250px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 4px; font-size: 13px; background: #f9fafb;">Đang tải...</div></div>
+                        <div class="input-group">
+    <label style="font-weight: bold; margin-bottom: 8px; display: block;">Chọn câu hỏi:</label>
+    <div id="exam-question-selector" style="max-height: 250px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 4px; font-size: 13px; background: #f9fafb;">
+        <span style="color: #6b7280;">Đang tải danh sách câu hỏi...</span>
+    </div>
+</div>
                         <button type="submit" class="btn-primary" style="margin-top: 15px;">Tạo Đề Thi</button>
                     </form>
                 </div>
@@ -161,16 +174,24 @@
         <main id="results-panel" class="main-panel" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2>Kết quả làm bài của học sinh</h2>
-                <button id="btn-export-csv" class="btn-primary" style="width: auto; margin-top: 0; background-color: #10b981;">Tải Bảng Điểm (Excel)</button>
+                <div>
+                    <!-- Nút Xóa hàng loạt (Mặc định ẩn) -->
+                    <button id="btn-delete-selected-r" class="btn-primary" style="background-color: #ef4444; width: auto; margin-right: 10px; display: none; padding: 10px 15px;">🗑 Xóa các bài đã chọn</button>
+                    <button id="btn-export-csv" class="btn-primary" style="width: auto; margin-top: 0; background-color: #10b981;">Tải Bảng Điểm (Excel)</button>
+                </div>
             </div>
             <div class="student-login-box" style="max-width: 100%;">
                 <div style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
                         <thead>
                             <tr style="background-color: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+                                <!-- Cột Checkbox Chọn tất cả -->
+                                <th style="padding: 10px; border: 1px solid #e5e7eb; text-align: center; width: 40px;">
+                                    <input type="checkbox" id="cb-select-all-r" style="cursor: pointer;">
+                                </th>
                                 <th style="padding: 10px; border: 1px solid #e5e7eb;">STT</th>
                                 <th style="padding: 10px; border: 1px solid #e5e7eb;">Tên học sinh</th>
-                                <th style="padding: 10px; border: 1px solid #e5e7eb; color: #3b82f6;">Lớp</th> <!-- ĐÃ THÊM CỘT LỚP -->
+                                <th style="padding: 10px; border: 1px solid #e5e7eb; color: #3b82f6;">Lớp</th>
                                 <th style="padding: 10px; border: 1px solid #e5e7eb;">Mã đề</th>
                                 <th style="padding: 10px; border: 1px solid #e5e7eb;">Tên đề thi</th>
                                 <th style="padding: 10px; border: 1px solid #e5e7eb; color: #ef4444;">Điểm</th>
@@ -180,8 +201,8 @@
                             </tr>
                         </thead>
                         <tbody id="results-table-body">
-                            <!-- Chỉnh colspan từ 8 lên 9 cho khớp số cột -->
-                            <tr><td colspan="9" style="text-align: center; padding: 20px;">Đang tải dữ liệu...</td></tr>
+                            <!-- Chỉnh colspan lên 10 vì đã thêm 1 cột checkbox -->
+                            <tr><td colspan="10" style="text-align: center; padding: 20px;">Đang tải dữ liệu...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -189,5 +210,23 @@
         </main>
     </div>
     <script type="module" src="dashboard.js"></script>
+    <!-- Thư viện CKEditor 4 để giữ định dạng Word -->
+<script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        if (document.getElementById('q-content')) { 
+            CKEDITOR.replace('q-content', {
+                height: 200,
+                toolbar: [
+                    ['Bold', 'Italic', 'Underline', 'Strike'],
+                    ['Table', 'NumberedList', 'BulletedList'],
+                    ['Undo', 'Redo', 'Maximize']
+                ]
+            });
+        }
+    });
+</script>
+<!-- Thư viện Mammoth.js để đọc file Word giữ nguyên Bảng và Ảnh -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
 </body>
 </html>

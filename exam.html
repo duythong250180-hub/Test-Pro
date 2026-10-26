@@ -6,6 +6,22 @@
     <title>Làm bài thi - Test Pro</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* --- LỆNH VẼ VIỀN BẢNG SỐ LIỆU --- */
+table {
+    border-collapse: collapse; /* Gộp viền kép thành viền đơn */
+    width: 100%;
+    margin: 15px 0;
+    background-color: #ffffff;
+}
+table, th, td {
+    border: 1px solid #000000 !important; /* Kẻ viền màu đen */
+    padding: 10px;
+    text-align: center; /* Căn giữa nội dung bảng */
+}
+th {
+    background-color: #f3f4f6; /* Tô màu nền xám nhạt cho tiêu đề cột */
+    font-weight: bold;
+}
         .exam-header { position: sticky; top: 0; background: white; padding: 10px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 100; display: flex; justify-content: space-between; align-items: center; }
         .timer { font-size: 28px; font-weight: bold; color: #ef4444; background: #fee2e2; padding: 5px 20px; border-radius: 8px; border: 2px solid #ef4444;}
         

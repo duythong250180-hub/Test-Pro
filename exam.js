@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!studentName || !examId) {
         alert("Vui lòng nhập mã đề từ trang chủ!");
-        window.location.href = "index.html"; return;
+        window.location.href = "index.html"; 
+        return;
     }
 
     document.getElementById("display-student-name").textContent = studentName;
@@ -44,28 +45,39 @@ document.addEventListener("DOMContentLoaded", async () => {
             renderQuestions(examData.questions);
             startTimer(examDuration);
         } else {
-            alert("Đề thi không tồn tại!"); window.location.href = "index.html";
+            alert("Đề thi không tồn tại!"); 
+            window.location.href = "index.html";
         }
     } catch (error) {
-        console.error(error); alert("Lỗi tải đề thi!");
+        console.error(error); 
+        alert("Lỗi tải đề thi!");
     }
 
     function renderQuestions(questions) {
         let html = "";
         let qIndex = 1; 
         
-        // Chia mảng thành 3 phần dựa trên Type đã bóc tách từ Dashboard
+        // BỘ LỌC ĐỊNH VỊ: Gắn vị trí gốc (original index) cho từng câu hỏi trước khi chia tách để máy chấm không bị nhầm
+        questions.forEach((q, i) => { q.originalIndex = i; });
+        
+        // Chia mảng thành 3 phần
         const mcq = questions.filter(q => q.type === 'MCQ');
         const tf = questions.filter(q => q.type === 'TF');
         const short = questions.filter(q => q.type === 'SHORT');
+
+        // BỘ LỌC THÔNG MINH: Tự động xóa chữ "Câu X:" thừa trong nội dung gốc
+        const cleanContent = (content) => {
+            if (!content) return "";
+            return content.replace(/^(<[^>]+>)?\s*Câu\s*\d+\s*[:\.\-]?\s*/i, '$1');
+        };
 
         // PHẦN I
         if (mcq.length > 0) {
             html += `<div class="section-title">PHẦN I. Câu trắc nghiệm nhiều phương án lựa chọn</div>`;
             mcq.forEach(q => {
                 html += `
-                <div class="question-card" data-type="MCQ" data-correct="${q.correct}" data-points="${q.points || 0.25}">
-                    <div class="question-title"><b>Câu ${qIndex}:</b> ${q.content}</div>
+                <div class="question-card" data-index="${q.originalIndex}">
+                    <div class="question-title"><b>Câu ${qIndex}:</b> ${cleanContent(q.content)}</div>
                     <label class="option-label"><input type="radio" name="q_${qIndex}" value="A" required> A. ${q.optA}</label>
                     <label class="option-label"><input type="radio" name="q_${qIndex}" value="B"> B. ${q.optB}</label>
                     <label class="option-label"><input type="radio" name="q_${qIndex}" value="C"> C. ${q.optC}</label>
@@ -80,8 +92,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             html += `<div class="section-title">PHẦN II. Câu trắc nghiệm Đúng / Sai</div>`;
             tf.forEach(q => {
                 html += `
-                <div class="question-card" data-type="TF" data-correct="${q.correct}" data-points="${q.points || 1}">
-                    <div class="question-title"><b>Câu ${qIndex}:</b> ${q.content}</div>
+                <div class="question-card" data-index="${q.originalIndex}">
+                    <div class="question-title"><b>Câu ${qIndex}:</b> ${cleanContent(q.content)}</div>
                     <table class="tf-table">
                         <tr><th>Mệnh đề</th><th style="width:15%; color:#10b981;">Đúng</th><th style="width:15%; color:#ef4444;">Sai</th></tr>
                         <tr><td class="tf-statement"><b>A.</b> ${q.optA}</td><td><input type="radio" name="q_${qIndex}_A" value="Đ" required></td><td><input type="radio" name="q_${qIndex}_A" value="S"></td></tr>
@@ -99,8 +111,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             html += `<div class="section-title">PHẦN III. Câu trắc nghiệm trả lời ngắn</div>`;
             short.forEach(q => {
                 html += `
-                <div class="question-card" data-type="SHORT" data-correct="${q.correct}" data-points="${q.points || 0.5}">
-                    <div class="question-title"><b>Câu ${qIndex}:</b> ${q.content}</div>
+                <div class="question-card" data-index="${q.originalIndex}">
+                    <div class="question-title"><b>Câu ${qIndex}:</b> ${cleanContent(q.content)}</div>
                     <input type="text" name="q_${qIndex}" class="short-input" placeholder="Nhập đáp án của bạn..." required>
                 </div>`;
                 qIndex++;
@@ -119,65 +131,120 @@ document.addEventListener("DOMContentLoaded", async () => {
             const m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
             const s = (timeRemaining % 60).toString().padStart(2, '0');
             displayTimer.textContent = `${m}:${s}`;
-            if (timeRemaining <= 0) { clearInterval(timerInterval); alert("Hết giờ! Tự động nộp bài."); submitExam(); }
+            if (timeRemaining <= 0) { 
+                clearInterval(timerInterval); 
+                alert("Hết giờ! Tự động nộp bài."); 
+                submitExam(); 
+            }
         }, 1000);
     }
 
     const examForm = document.getElementById("exam-form");
     examForm.addEventListener("submit", (e) => {
-        e.preventDefault(); if (confirm("Bạn có chắc chắn nộp bài?")) submitExam();
+        e.preventDefault(); 
+        if (confirm("Bạn có chắc chắn nộp bài?")) submitExam();
     });
 
     async function submitExam() {
         clearInterval(timerInterval); 
-        btnSubmit.disabled = true; btnSubmit.textContent = "Đang chấm điểm...";
+        btnSubmit.disabled = true; 
+        btnSubmit.textContent = "Đang chấm điểm...";
 
-        let score = 0; let correctCount = 0;
-        const cards = document.querySelectorAll('.question-card');
+        let score = 0;
+        let correctCount = 0;
         
-        cards.forEach((card, idx) => {
-            const type = card.getAttribute('data-type');
-            const correctAns = card.getAttribute('data-correct');
-            const points = parseFloat(card.getAttribute('data-points'));
-            const qNum = idx + 1;
+        const cards = document.querySelectorAll('.question-card');
 
-            if (type === 'MCQ') {
-                const selected = document.querySelector(`input[name="q_${qNum}"]:checked`);
-                if (selected && selected.value === correctAns) { score += points; correctCount++; }
-            } 
-            else if (type === 'TF') {
-                const selA = document.querySelector(`input[name="q_${qNum}_A"]:checked`)?.value || "";
-                const selB = document.querySelector(`input[name="q_${qNum}_B"]:checked`)?.value || "";
-                const selC = document.querySelector(`input[name="q_${qNum}_C"]:checked`)?.value || "";
-                const selD = document.querySelector(`input[name="q_${qNum}_D"]:checked`)?.value || "";
-                const studentAns = `${selA},${selB},${selC},${selD}`;
-                
-                if (selA && selB && selC && selD && studentAns === correctAns) { score += points; correctCount++; }
-            } 
-            else if (type === 'SHORT') {
-                const input = document.querySelector(`input[name="q_${qNum}"]`);
-                if (input && input.value.trim().toUpperCase() === correctAns.toUpperCase()) { score += points; correctCount++; }
-            }
-        });
-
-        score = Math.round(score * 100) / 100;
         try {
-           await addDoc(collection(db, "results"), {
-    examId: examId, 
-    examTitle: examTitle, 
-    examCode: examData.examCode, // (Giữ nguyên các trường cũ của bạn)
-    studentName: studentName, 
-    studentClass: studentClass,  // <--- THÊM DÒNG NÀY VÀO ĐÂY
-    score: score, 
-    correctCount: correctCount,
-    totalQuestions: cards.length, 
-    teacherId: examData.teacherId
-});
+            // VÒNG LẶP CHẤM ĐIỂM THÔNG MINH (Đọc theo data-index để không bao giờ bị lệch câu hỏi)
+            cards.forEach((card) => {
+                const realIndex = card.getAttribute('data-index');
+                const q = examData.questions[realIndex];
+                if (!q) return; 
+
+                // Chuẩn hóa đáp án (chữ in hoa, xóa khoảng trắng thừa)
+                let correctAnswer = q.correct ? String(q.correct).trim().toUpperCase() : "";
+
+                if (q.type === "TF") {
+                    // Tự động đổi chữ D (tiếng Anh) thành Đ (tiếng Việt)
+                    correctAnswer = correctAnswer.replace(/D/g, 'Đ').replace(/\s+/g, '');
+                    
+                    const studentInputs = card.querySelectorAll('select, input[type="radio"]:checked'); 
+                    let studentAnswers = [];
+                    studentInputs.forEach(input => studentAnswers.push(input.value.trim().toUpperCase()));
+
+                    const correctArr = correctAnswer.split(',');
+                    let partialCorrect = 0;
+
+                    for (let i = 0; i < 4; i++) {
+                        if (studentAnswers[i] && correctArr[i] && studentAnswers[i] === correctArr[i]) {
+                            partialCorrect++;
+                        }
+                    }
+                    
+                    // Tính điểm: Lấy tổng điểm của câu chia 4
+                    const questionPoint = parseFloat(q.points || 1);
+                    score += partialCorrect * (questionPoint / 4);
+                    
+                    if (partialCorrect === 4) {
+                        correctCount++;
+                    }
+
+                } else if (q.type === "MCQ") {
+                    const selected = card.querySelector('input[type="radio"]:checked');
+                    if (selected && selected.value === correctAnswer) {
+                        score += parseFloat(q.points || 0.25);
+                        correctCount++;
+                    }
+                } else if (q.type === "SHORT") {
+                    const input = card.querySelector('input[type="text"]');
+                    if (input) {
+                        // Tối ưu: Xóa toàn bộ dấu cách để chấm chính xác hơn
+                        const studentAns = input.value.trim().toUpperCase().replace(/\s+/g, '');
+                        const finalCorrect = correctAnswer.replace(/\s+/g, '');
+                        if (studentAns !== "" && studentAns === finalCorrect) {
+                            score += parseFloat(q.points || 0.5);
+                            correctCount++;
+                        }
+                    }
+                }
+            });
+
+            // Làm tròn 2 chữ số thập phân
+            score = Math.round(score * 100) / 100;
+
+        } catch (calcError) {
+            console.error("Lỗi trong lúc tính điểm:", calcError);
+            alert("Có lỗi xảy ra khi đọc dữ liệu câu hỏi. Hãy báo cho giáo viên.");
+            btnSubmit.textContent = "Nộp bài";
+            btnSubmit.disabled = false;
+            return; 
+        }
+
+        try {
+            // LƯU KẾT QUẢ LÊN MÁY CHỦ
+            await addDoc(collection(db, "results"), {
+                examId: examId,
+                examTitle: examTitle,
+                examCode: examData.examCode,
+                studentName: studentName,
+                studentClass: studentClass,
+                score: score,
+                correctCount: correctCount,
+                totalQuestions: cards.length,
+                teacherId: examData.teacherId, 
+                submittedAt: serverTimestamp() 
+            });
+            
             sessionStorage.clear();
-            alert(`🎉 NỘP BÀI THÀNH CÔNG!\n- Điểm của bạn: ${score}\n- Số câu đúng: ${correctCount} / ${cards.length}`);
+            alert(`🎉 NỘP BÀI THÀNH CÔNG!\nĐiểm của bạn: ${score}\nSố câu đúng: ${correctCount} / ${cards.length}`);
             window.location.href = "index.html"; 
+            
         } catch (error) {
-            console.error(error); alert("Lỗi lưu điểm!"); btnSubmit.disabled = false; btnSubmit.textContent = "Thử nộp lại";
+            console.error(error); 
+            alert("Lỗi lưu điểm! Vui lòng kiểm tra lại kết nối mạng."); 
+            btnSubmit.disabled = false; 
+            btnSubmit.textContent = "Thử nộp lại";
         }
     }
 });

@@ -21,13 +21,18 @@ document.addEventListener("DOMContentLoaded", () => {
         studentForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             
-            // Lấy thông tin học sinh nhập, tự động in hoa mã đề để tránh lỗi gõ phím
+            // Lấy thông tin học sinh nhập
             const testCode = document.getElementById("test-code").value.trim().toUpperCase();
             const studentName = document.getElementById("student-name").value.trim();
+            
+            // THÊM MỚI: Lấy thông tin Lớp
+            const studentClass = document.getElementById("student-class").value.trim(); 
+            
             const btnSubmit = studentForm.querySelector('button[type="submit"]');
 
-            if (!testCode || !studentName) {
-                return alert("Vui lòng nhập đầy đủ thông tin!");
+            // THÊM MỚI: Bắt buộc nhập cả Lớp
+            if (!testCode || !studentName || !studentClass) {
+                return alert("Vui lòng nhập đầy đủ Mã đề, Họ tên và Lớp!");
             }
 
             // Đổi giao diện nút bấm trong lúc chờ mạng
@@ -56,8 +61,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     examData = doc.data();
                 });
 
-                // Lưu thông tin vào bộ nhớ tạm của trình duyệt (Session) để lát nữa trang thi sử dụng
+                // LƯU THÔNG TIN VÀO BỘ NHỚ TẠM (SESSION)
                 sessionStorage.setItem("studentName", studentName);
+                
+                // THÊM MỚI: Lưu Tên Lớp vào bộ nhớ tạm để truyền cho file exam.js
+                sessionStorage.setItem("studentClass", studentClass); 
+                
                 sessionStorage.setItem("examId", examId);
                 sessionStorage.setItem("examTitle", examData.title);
                 sessionStorage.setItem("examDuration", examData.duration);
